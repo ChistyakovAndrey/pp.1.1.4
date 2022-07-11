@@ -3,15 +3,18 @@ package jm.task.core.jdbc;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Main {
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+    public static void main(String[] args) throws SQLException {
 
-        UserService us = new UserServiceImpl();
+        UserServiceImpl us = new UserServiceImpl();
+        us.setAutoCommitFalse();
+        us.toStartTransaction();
 
         // Создание базы
         us.createUsersTable();
@@ -33,8 +36,17 @@ public class Main {
             System.out.println(user);
         }
 
+
         // Truncate & drop
         us.cleanUsersTable();
         us.dropUsersTable();
+
+        System.out.println("itGoesFine: " + UserServiceImpl.itGoesFine);
+        if(UserServiceImpl.itGoesFine){
+            us.toCommit();
+        }
+        else{
+            us.toRollback();
+        }
     }
 }

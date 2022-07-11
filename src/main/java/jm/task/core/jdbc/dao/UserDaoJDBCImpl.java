@@ -1,29 +1,56 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
+import jm.task.core.jdbc.service.UserServiceImpl;
 import jm.task.core.jdbc.util.Util;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
     Statement statement;
+    Connection connection;
 
     {
         try {
-            Connection connection = Util.getMySQLConnection();
-            connection.setAutoCommit(false);
+            connection = Util.getMySQLConnection();
             statement = connection.createStatement();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public void setAutoCommitFalse() throws SQLException {
+        connection.setAutoCommit(false);
+    }
+
     public UserDaoJDBCImpl() {
 
+    }
+
+    public void toStartTransaction() {
+        try {
+            statement.execute("START TRANSACTION");
+        } catch (SQLException ignored) {
+
+        }
+    }
+
+    public void toCommit() {
+        try {
+            statement.execute("COMMIT");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void toRollback() {
+        try {
+            statement.execute("ROLLBACK");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void createUsersTable() {
@@ -32,7 +59,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try {
             statement.executeUpdate(createUserTable);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            UserServiceImpl.itGoesFine = false;
         }
     }
 
@@ -41,7 +68,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try {
             statement.executeUpdate(dropTableUser);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            UserServiceImpl.itGoesFine = false;
         }
     }
 
@@ -51,16 +78,15 @@ public class UserDaoJDBCImpl implements UserDao {
         try {
             statement.executeUpdate(saveUser);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            UserServiceImpl.itGoesFine = false;
         }
     }
 
     public void removeUserById(long id) {
-        String removeUser = "delete from user where id = " + id;
         try {
-            statement.executeUpdate(removeUser);
+            statement.executeUpdate("delete from user where id = " + id);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            UserServiceImpl.itGoesFine = false;
         }
     }
 
@@ -77,8 +103,9 @@ public class UserDaoJDBCImpl implements UserDao {
                 );
                 usersList.add(user);
             }
+            throw new SQLException();
         } catch (SQLException e) {
-            System.out.println("SQLException");
+            UserServiceImpl.itGoesFine = false;
         }
         return usersList;
     }
@@ -88,7 +115,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try {
             statement.executeUpdate(truncateTableUser);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            UserServiceImpl.itGoesFine = false;
         }
     }
 }
