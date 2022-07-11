@@ -103,7 +103,6 @@ public class UserDaoJDBCImpl implements UserDao {
                 );
                 usersList.add(user);
             }
-            throw new SQLException();
         } catch (SQLException e) {
             UserServiceImpl.itGoesFine = false;
         }

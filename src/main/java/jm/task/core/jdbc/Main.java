@@ -14,10 +14,11 @@ public class Main {
 
         UserServiceImpl us = new UserServiceImpl();
         us.setAutoCommitFalse();
-        us.toStartTransaction();
 
         // Создание базы
         us.createUsersTable();
+
+        us.toStartTransaction();
 
         // Добавление users
         List<User> users = new ArrayList<>();
@@ -36,17 +37,16 @@ public class Main {
             System.out.println(user);
         }
 
+        if (UserServiceImpl.itGoesFine) {
+            us.toCommit();
+        } else {
+            us.toRollback();
+        }
 
         // Truncate & drop
         us.cleanUsersTable();
         us.dropUsersTable();
 
-        System.out.println("itGoesFine: " + UserServiceImpl.itGoesFine);
-        if(UserServiceImpl.itGoesFine){
-            us.toCommit();
-        }
-        else{
-            us.toRollback();
-        }
+        //System.out.println("itGoesFine: " + UserServiceImpl.itGoesFine);
     }
 }
