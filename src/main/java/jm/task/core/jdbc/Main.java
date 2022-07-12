@@ -10,15 +10,12 @@ import java.util.List;
 
 
 public class Main {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
 
         UserServiceImpl us = new UserServiceImpl();
-        us.setAutoCommitFalse();
 
         // Создание базы
         us.createUsersTable();
-
-        us.toStartTransaction();
 
         // Добавление users
         List<User> users = new ArrayList<>();
@@ -37,16 +34,8 @@ public class Main {
             System.out.println(user);
         }
 
-        if (UserServiceImpl.itGoesFine) {
-            us.toCommit();
-        } else {
-            us.toRollback();
-        }
-
         // Truncate & drop
         us.cleanUsersTable();
         us.dropUsersTable();
-
-        //System.out.println("itGoesFine: " + UserServiceImpl.itGoesFine);
     }
 }

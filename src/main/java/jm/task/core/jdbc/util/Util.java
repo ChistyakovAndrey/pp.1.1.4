@@ -15,8 +15,7 @@ public class Util {
     }
 
     public static Connection getMySQLConnection(String hostName, String dbName,
-                                                String userName, String password) throws SQLException,
-            ClassNotFoundException {
+                                                String userName, String password) throws SQLException{
 
         String connectionURL = "jdbc:mysql://" + hostName + ":3306/" + dbName;
 

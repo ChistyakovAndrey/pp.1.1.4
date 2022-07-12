@@ -1,7 +1,6 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.service.UserServiceImpl;
 import jm.task.core.jdbc.util.Util;
 
 import java.sql.*;
@@ -54,39 +53,47 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void createUsersTable() {
+        toStartTransaction();
         String createUserTable = "create table if not exists USER(ID integer not null AUTO_INCREMENT, USER_NAME varchar(50) not null," +
                 "USER_LASTNAME varchar(50) not null, USER_AGE integer not null, primary key (ID))";
         try {
             statement.executeUpdate(createUserTable);
+            toCommit();
         } catch (SQLException e) {
-            UserServiceImpl.itGoesFine = false;
+            toRollback();
         }
     }
 
     public void dropUsersTable() {
+        toStartTransaction();
         String dropTableUser = "drop table if exists user";
         try {
             statement.executeUpdate(dropTableUser);
+            toCommit();
         } catch (SQLException e) {
-            UserServiceImpl.itGoesFine = false;
+            toRollback();
         }
     }
 
     public void saveUser(String name, String lastName, byte age) {
+        toStartTransaction();
         String saveUser = "insert into user(USER_NAME, USER_LASTNAME, USER_AGE) values('" + name + "', '"
                 + lastName + "', " + age + ")";
         try {
             statement.executeUpdate(saveUser);
+            toCommit();
         } catch (SQLException e) {
-            UserServiceImpl.itGoesFine = false;
+            toRollback();
         }
     }
 
     public void removeUserById(long id) {
+        toStartTransaction();
         try {
             statement.executeUpdate("delete from user where id = " + id);
+            toCommit();
         } catch (SQLException e) {
-            UserServiceImpl.itGoesFine = false;
+            toRollback();
         }
     }
 
@@ -103,18 +110,19 @@ public class UserDaoJDBCImpl implements UserDao {
                 );
                 usersList.add(user);
             }
-        } catch (SQLException e) {
-            UserServiceImpl.itGoesFine = false;
+        } catch (SQLException ignored) {
         }
         return usersList;
     }
 
     public void cleanUsersTable() {
+        toStartTransaction();
         String truncateTableUser = "truncate table user";
         try {
             statement.executeUpdate(truncateTableUser);
+            toCommit();
         } catch (SQLException e) {
-            UserServiceImpl.itGoesFine = false;
+            toRollback();
         }
     }
 }

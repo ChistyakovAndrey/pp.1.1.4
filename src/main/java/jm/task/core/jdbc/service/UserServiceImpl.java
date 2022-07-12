@@ -8,7 +8,7 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
     UserDaoJDBCImpl userDao = new UserDaoJDBCImpl();
-    public static boolean itGoesFine = true;
+    //public static boolean itGoesFine = true;
 
     public void toStartTransaction() {
         userDao.toStartTransaction();
