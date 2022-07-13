@@ -10,22 +10,6 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     UserDaoHibernateImpl userDao = new UserDaoHibernateImpl();
 
-//    public void toStartTransaction() {
-//        userDao.toStartTransaction();
-//    }
-//
-//    public void toCommit() {
-//        userDao.toCommit();
-//    }
-//
-//    public void toRollback() {
-//        userDao.toRollback();
-//    }
-//
-//    public void setAutoCommitFalse() throws SQLException {
-//        userDao.setAutoCommitFalse();
-//    }
-
     public void createUsersTable() {
         userDao.createUsersTable();
     }
