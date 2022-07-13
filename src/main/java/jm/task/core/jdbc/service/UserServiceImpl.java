@@ -1,5 +1,6 @@
 package jm.task.core.jdbc.service;
 
+import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
 import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
 import jm.task.core.jdbc.model.User;
 
@@ -7,24 +8,23 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
-    UserDaoJDBCImpl userDao = new UserDaoJDBCImpl();
-    //public static boolean itGoesFine = true;
+    UserDaoHibernateImpl userDao = new UserDaoHibernateImpl();
 
-    public void toStartTransaction() {
-        userDao.toStartTransaction();
-    }
-
-    public void toCommit() {
-        userDao.toCommit();
-    }
-
-    public void toRollback() {
-        userDao.toRollback();
-    }
-
-    public void setAutoCommitFalse() throws SQLException {
-        userDao.setAutoCommitFalse();
-    }
+//    public void toStartTransaction() {
+//        userDao.toStartTransaction();
+//    }
+//
+//    public void toCommit() {
+//        userDao.toCommit();
+//    }
+//
+//    public void toRollback() {
+//        userDao.toRollback();
+//    }
+//
+//    public void setAutoCommitFalse() throws SQLException {
+//        userDao.setAutoCommitFalse();
+//    }
 
     public void createUsersTable() {
         userDao.createUsersTable();

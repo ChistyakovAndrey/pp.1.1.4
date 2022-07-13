@@ -1,5 +1,6 @@
 package jm.task.core.jdbc;
 
+import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
@@ -11,11 +12,10 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-
-        UserServiceImpl us = new UserServiceImpl();
+        UserDaoHibernateImpl userDao = new UserDaoHibernateImpl();
 
         // Создание базы
-        us.createUsersTable();
+        userDao.createUsersTable();
 
         // Добавление users
         List<User> users = new ArrayList<>();
@@ -24,18 +24,18 @@ public class Main {
         users.add(new User("John", "Doe", (byte) 127));
         users.add(new User("John", "Connor", (byte) 36));
         for (User user : users) {
-            us.saveUser(user.getName(), user.getLastName(), user.getAge());
+            userDao.saveUser(user.getName(), user.getLastName(), user.getAge());
             System.out.println("User с именем " + user.getName() + " добавлен в базу данных");
         }
 
         // Достаем всех users
-        List<User> list = us.getAllUsers();
+        List<User> list = userDao.getAllUsers();
         for (User user : list) {
             System.out.println(user);
         }
 
         // Truncate & drop
-        us.cleanUsersTable();
-        us.dropUsersTable();
+        userDao.cleanUsersTable();
+        userDao.dropUsersTable();
     }
 }
