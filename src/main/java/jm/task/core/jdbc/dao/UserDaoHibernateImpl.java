@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class UserDaoHibernateImpl implements UserDao {
-    Session session = new Util().getSession();
+    Util utilInstance = Util.getInstance();
+    Session session = null;
+
 
     public UserDaoHibernateImpl() {
 
@@ -17,73 +19,108 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        session.beginTransaction();
-        String createUserTable = "create table if not exists USER(ID integer not null AUTO_INCREMENT, USER_NAME varchar(50) not null," +
-                "USER_LASTNAME varchar(50) not null, USER_AGE integer not null, primary key (ID))";
-        try {
-            new UserDaoJDBCImpl().statement.executeUpdate(createUserTable);
-            session.getTransaction().commit();
-        } catch (SQLException e) {
-            session.getTransaction().rollback();
+        try (Session session = utilInstance.getSession();) {
+            session.beginTransaction();
+            String createUserTable = "create table if not exists USER(ID integer not null AUTO_INCREMENT, USER_NAME varchar(50) not null," +
+                    "USER_LASTNAME varchar(50) not null, USER_AGE integer not null, primary key (ID))";
+            try {
+                new UserDaoJDBCImpl().statement.executeUpdate(createUserTable);
+                session.getTransaction().commit();
+            } catch (SQLException e) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 
     @Override
     public void dropUsersTable() {
-        session.beginTransaction();
-        String dropTableUser = "drop table if exists user";
-        try {
-            new UserDaoJDBCImpl().statement.executeUpdate(dropTableUser);
-            session.getTransaction().commit();
-        } catch (SQLException e) {
-            session.getTransaction().rollback();
+        try (Session session = utilInstance.getSession();) {
+            session.beginTransaction();
+            String dropTableUser = "drop table if exists user";
+            try {
+                new UserDaoJDBCImpl().statement.executeUpdate(dropTableUser);
+                session.getTransaction().commit();
+            } catch (SQLException e) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        session.beginTransaction();
-        User user = new User(name, lastName, age);
-        try {
-            session.save(user);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        try (Session session = utilInstance.getSession();) {
+            session.beginTransaction();
+            User user = new User(name, lastName, age);
+            try {
+                session.save(user);
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 
     @Override
     public void removeUserById(long id) {
-        session.beginTransaction();
-        try {
-            User user = session.get(User.class, id);
-            session.delete(user);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        try (Session session = utilInstance.getSession();) {
+            session.beginTransaction();
+            try {
+                User user = session.get(User.class, id);
+                session.delete(user);
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
-
     }
 
     @Override
     public List<User> getAllUsers() {
-        List list;
-        list = session.createQuery("from User").getResultList();
-        return list;
+        try (Session session = utilInstance.getSession();) {
+            List list;
+            list = session.createQuery("from User").getResultList();
+            return list;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 
     @Override
     public void cleanUsersTable() {
-        List<User> list = getAllUsers();
-        try {
-            session.beginTransaction();
-            for (User user : list) {
-                user = session.get(User.class, user.getId());
-                session.delete(user);
+        try (Session session = utilInstance.getSession();) {
+            List<User> list = getAllUsers();
+            try {
+                session.beginTransaction();
+                for (User user : list) {
+                    user = session.get(User.class, user.getId());
+                    session.delete(user);
+                }
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
             }
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 }

@@ -12,7 +12,12 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Util {
-    private SessionFactory getFactory() {
+    private static final Util INSTANCE = new Util();
+    private Util(){}
+    public static Util getInstance(){
+        return INSTANCE;
+    }
+    public static SessionFactory getFactory() {
         Properties prop = new Properties();
         prop.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/preproject?useSSL=false&serverTimezone=UTC");
         prop.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
@@ -27,9 +32,9 @@ public class Util {
             return sessionFactory;
 
     }
-    public Session getSession(){
-        Session f = getFactory().openSession();
-        return f;
+    public static Session getSession(){
+        Session session = getFactory().openSession();
+        return session;
     }
 
     public static Connection getMySQLConnection() throws SQLException,
