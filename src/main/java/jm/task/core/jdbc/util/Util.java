@@ -12,27 +12,26 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Util {
-    private static final Util INSTANCE = new Util();
-    private Util(){}
-    public static Util getInstance(){
-        return INSTANCE;
-    }
-    public static SessionFactory getFactory() {
-        Properties prop = new Properties();
-        prop.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/preproject?useSSL=false&serverTimezone=UTC");
-        prop.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
-        prop.setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
-        prop.setProperty("hibernate.connection.username", "root");
-        prop.setProperty("hibernate.connection.password", "2222");
-        prop.setProperty("show_sql", "true");
-        SessionFactory sessionFactory = new Configuration()
-                .addProperties(prop)
-                .addAnnotatedClass(User.class)
-                .buildSessionFactory();
-            return sessionFactory;
+    private static SessionFactory sessionFactory;
 
+    public static SessionFactory getFactory() {
+        if (sessionFactory == null) {
+            Properties prop = new Properties();
+            prop.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/preproject?useSSL=false&serverTimezone=UTC");
+            prop.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
+            prop.setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
+            prop.setProperty("hibernate.connection.username", "root");
+            prop.setProperty("hibernate.connection.password", "2222");
+            prop.setProperty("show_sql", "true");
+            sessionFactory = new Configuration()
+                    .addProperties(prop)
+                    .addAnnotatedClass(User.class)
+                    .buildSessionFactory();
+        }
+        return sessionFactory;
     }
-    public static Session getSession(){
+
+    public static Session getSession() {
         Session session = getFactory().openSession();
         return session;
     }
