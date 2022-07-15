@@ -20,7 +20,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public void createUsersTable() {
         try (Session session = Util.getSession();) {
             session.beginTransaction();
-            String createUserTable = "create table if not exists USER(ID integer not null AUTO_INCREMENT, USER_NAME varchar(50) not null," +
+            String createUserTable = "create table if not exists User(ID integer not null AUTO_INCREMENT, USER_NAME varchar(50) not null," +
                     "USER_LASTNAME varchar(50) not null, USER_AGE integer not null, primary key (ID))";
             try {
                 new UserDaoJDBCImpl().statement.executeUpdate(createUserTable);
@@ -39,7 +39,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public void dropUsersTable() {
         try (Session session = Util.getSession();) {
             session.beginTransaction();
-            String dropTableUser = "drop table if exists user";
+            String dropTableUser = "drop table if exists User";
             try {
                 new UserDaoJDBCImpl().statement.executeUpdate(dropTableUser);
                 session.getTransaction().commit();
@@ -91,7 +91,7 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public List<User> getAllUsers() {
-        try (Session session = Util.getSession();) {
+        try (Session session = Util.getSession()) {
             List list;
             list = session.createQuery("from User").getResultList();
             return list;
@@ -104,7 +104,14 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        dropUsersTable();
-        createUsersTable();
+        try(Session session = Util.getSession()){
+            session.beginTransaction();
+            try{
+                session.createQuery("delete from User").executeUpdate();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 }
